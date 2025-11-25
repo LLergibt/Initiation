@@ -1,0 +1,12 @@
+@use "abstracts/index" as *;
+
+// 2. Import Base Styles
+@use "base/reset";
+@use "base/typography";
+
+.app-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    color: $text-main;
+}
