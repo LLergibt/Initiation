@@ -1,0 +1,6 @@
+@use "../abstracts/index" as *;
+
+body {
+    font-family: $font-family;
+    overflow: hidden;
+}
