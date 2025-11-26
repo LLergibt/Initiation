@@ -1,63 +1,103 @@
-<script>
+<script lang="ts">
     import "./styles.scss";
-    import Icons from "$lib/utils/icons";
+    import CodeMirror from "svelte-codemirror-editor";
+    import { markdown } from "@codemirror/lang-markdown";
+    import { marked } from "marked";
+
+    import { EditorView } from "@codemirror/view";
+    // import { HighlightStyle } from "@codemirror/language";
+    // import { tags } from "@lezer/highlight";
+    const Icons = {
+        read: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Read mode">
+        <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z" stroke="#333" stroke-width="1.5" fill="none"/>
+        <circle cx="12" cy="12" r="3.5" stroke="#333" stroke-width="1.5" fill="none"/>
+        <circle cx="12" cy="12" r="2" fill="#333"/>
+      </svg>`,
+        edit: `
+        <svg width="24" height="24" viewBox="0 0 24 24"
+             xmlns="http://www.w3.org/2000/svg" aria-label="Edit mode">
+          <path d="M3.5 16.5L7.5 20.5 20.5 7.5 16.5 3.5 3.5 16.5Z"
+                stroke="black" stroke-width="1.5" fill="none"/>
+          <path d="M15.8 4.2l4 4"
+                stroke="black" stroke-width="1.5" fill="none"/>
+          <path d="M7 21l-4 1 1-4"
+                stroke="black" stroke-width="1.5" fill="none"/>
+        </svg>
+      `,
+    };
+
+    let isEdit = $state(false);
+    let value = $state(`# Initiation Script
+it's not a lake it's an **ocean**.`);
+    $effect(() => {
+        console.log(value);
+    });
+
+    // Custom theme (fonts, spacing, gutter hidden)
+    const lightTheme = EditorView.theme(
+        {
+            ".cm-content": {
+                fontFamily: "Inter, sans-serif",
+                fontSize: "16px",
+                lineHeight: "1.6",
+                backgroundColor: "white",
+                color: "#222",
+            },
+            ".cm-line": {
+                padding: "2px 4px",
+            },
+            ".cm-gutters": {
+                display: "none !important", // hides line numbers gutter
+            },
+            ".cm-editor": {
+                backgroundColor: "white",
+                border: "none",
+                boxShadow: "none",
+            },
+            ".cm-cursor": {
+                borderLeftColor: "#000", // black cursor
+            },
+        },
+        { dark: false },
+    );
+    const onChangeMode = () => {
+        isEdit = !isEdit;
+    };
+
+    // Custom highlight styles for Markdown tokens
+    // const customHighlight = HighlightStyle.define([
+    //     {
+    //         tag: tags.heading1,
+    //         fontSize: "1.8em",
+    //         fontWeight: "bold",
+    //         color: "#ffcc00",
+    //     },
+    // ]);
 </script>
 
-<main class="content">
-    <div class="top-bar">
-        <div class="navigation-arrows">
-            <span>←</span>
-            <span>→</span>
-        </div>
-        <div class="tab active">
-            <span>Initiation Script</span>
-            <span class="close-btn">{@html Icons.close}</span>
-        </div>
-        <div class="new-tab">{@html Icons.plus}</div>
-    </div>
+<div class="main-div">
+    {#if isEdit}
+        <button onclick={onChangeMode} class="btn">
+            {@html Icons.read}
+        </button>
+        <CodeMirror bind:value lang={markdown()} extensions={[lightTheme]}
+        ></CodeMirror>
+    {:else}
+        <button onclick={onChangeMode} class="btn">
+            {@html Icons.edit}
+        </button>
+        {@html marked(value)}
+    {/if}
+</div>
 
-    <div class="editor-area">
-        <div class="editor-width-limiter">
-            <h1
-                class="page-title editable"
-                contenteditable="true"
-                spellcheck="false"
-                placeholder="Untitled"
-            >
-                Initiation Script
-            </h1>
-
-            <div
-                class="page-content editable"
-                contenteditable="true"
-                spellcheck="false"
-            >
-                <p>
-                    <strong>Saga</strong>
-                    was back at Cauldron Lake. He was there too. Nightingale. Was,
-                    but wasn't. A Taken. A creature of darkness. He was beyond her
-                    reach. Where some other strange reality, the Dark Place, merged
-                    with ours. This place and the Dark Place. A tarp thrown over
-                    top. Drowning everything beneath it. A flood of darkness. Soaking
-                    into everything. Spoiling it. Rotting it. The page called this
-                    area an Overlap. Saga had to purse Nightingale into the Overlap.
-                    Finding a way in would be difficult. Required precise steps.
-                    A ritual. Saga would learn how. Stop the monster. Her job. Before
-                    he killed again. He'd be inside. Waiting for her.
-                </p>
-                <p>
-                    <strong>Thomas Zane</strong>
-                    - For he did not know That beyond the lake He called home Lies
-                    a deeper, darker Ocean green Where waves are Both wilder And
-                    more serene To its ports I've been To its ports I've been.
-                </p>
-                <p>
-                    <strong>Alan Wake</strong>
-                    - It's not a lake it's an ocean
-                </p>
-
-                <p><br /></p>
-            </div>
-        </div>
-    </div>
-</main>
+<style>
+    /* Optional: tweak editor container */
+    .main-div {
+        padding: 3rem;
+    }
+    .btn {
+        background-color: white;
+        box-shadow: none;
+        border: none;
+    }
+</style>
