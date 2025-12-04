@@ -1,8 +1,6 @@
 use std::path::PathBuf;
 use chrono::{DateTime, Utc};
 
-// use super::vault::VaultId;
-
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct NodeId(pub String);
 
@@ -14,9 +12,8 @@ pub enum NodeKind {
 
 #[derive(Debug, Clone)]
 pub struct NodeMeta {
-    // pub vault_id: VaultId,
+    pub id: NodeId,
     pub kind: NodeKind,
-
     pub path: PathBuf,  // relative path inside the vault
     pub title: String,
     pub tags: Vec<String>,
@@ -26,11 +23,12 @@ pub struct NodeMeta {
 
     pub color: Option<String>,
 
+    pub size_bytes: Option<u64>, 
     pub content_hash: Option<String>, // maybe version?
 }
 
 #[derive(Debug, Clone)]
-pub struct NoteContent {
+pub struct NodeContent {
     pub meta: NodeMeta,
     pub raw: String,
 }
