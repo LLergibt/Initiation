@@ -2,11 +2,12 @@
     import Sidebar from "$lib/components/sidebar/sidebar.svelte";
     import { PaneGroup, Pane, PaneResizer } from "paneforge";
     import FileEditor from "$lib/components/file-editor/FileEditor.svelte";
+    let containerWidth = $state();
 </script>
 
-<div style="height: 100vh;">
+<div style="height: 100vh;" bind:clientWidth={containerWidth}>
     <PaneGroup direction="horizontal">
-        <Sidebar />
+        <Sidebar {containerWidth} />
         <PaneResizer class="resizer" />
         <Pane minSize={20} defaultSize={80}>
             <FileEditor />

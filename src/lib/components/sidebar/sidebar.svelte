@@ -2,17 +2,15 @@
     import "./styles.scss";
     import Icons from "$lib/utils/icons";
     import { PaneGroup, Pane, PaneResizer } from "paneforge";
+    let { containerWidth } = $props();
 
     let isHidden = $state(false);
     // svelte-ignore non_reactive_update
     let paneOne: ReturnType<typeof Pane>;
+    let sidebarWidthPx = 224;
 
     const hideSidebar = () => {
-        if (isHidden) {
-            paneOne.expand;
-        } else {
-            paneOne.collapse;
-        }
+        isHidden = !isHidden;
     };
     // Заглушки пока Vladimir GURSKY не сделал апи с файловой системой
     const sidebarItems = [
@@ -24,17 +22,30 @@
         },
         { name: "Initiation Script", type: "file", active: true },
     ];
+    const handleResize = async (sizeInPercent: number) => {
+        if (containerWidth) {
+            sidebarWidthPx = (sizeInPercent / 100) * containerWidth;
+        }
+    };
+    $effect(() => {
+        if (paneOne && containerWidth && sidebarWidthPx) {
+            const newPercent = (sidebarWidthPx / containerWidth) * 100;
+            paneOne.resize(newPercent);
+        }
+    });
 </script>
 
 <Pane
+    onResize={handleResize}
     collapsible={true}
     collapsedSize={0}
     bind:this={paneOne}
     onCollapse={() => (isHidden = true)}
     onExpand={() => (isHidden = false)}
-    minSize={20}
-    defaultSize={21}
-    style={isHidden ? `width: 3rem !important; flex: none !important;` : ""}
+    defaultSize={14}
+    style={isHidden
+        ? `width: 3rem !important; flex: none !important;`
+        : `min-width: 14rem;`}
 >
     {#if !isHidden}
         <aside class="sidebar">
