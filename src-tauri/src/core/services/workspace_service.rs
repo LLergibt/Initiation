@@ -13,7 +13,7 @@ pub struct WorkspaceService {
     meta: Arc<dyn MetaStore>,
 }
 
-// API Layer
+// API Layer, called from Tauri command
 impl WorkspaceService {
 
 }

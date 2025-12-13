@@ -1,5 +1,8 @@
 use anyhow::Result;
-use crate::core::{WorkspaceInfo, NodeId, NodeMeta, NodeContent};
+use crate::core::{NodeId, NodeMeta, NodeContent};
+
+pub mod fs;
+pub use fs::{FsContentSource, FsMetaStore, FsWorkspaceStorage};
 
 // Content control layer - works only with content, no meta, RW operation for files
 pub trait ContentSource {
@@ -23,9 +26,9 @@ pub trait WorkspaceStorage: Send + Sync {
     fn resync(&self) -> Result<()>; // rescan or synchronize
     fn list_nodes(&self) -> Result<Vec<NodeMeta>>;
     fn get_node_meta(&self, id: &NodeId) -> Result<Option<NodeMeta>>;
-    fn load_note(&self, id: &NodeId) -> Result<NodeContent>;
-    fn create_note(&self, relative_path: &str, title: &str, initial_body: &str) -> Result<NodeContent>;
-    fn save_note(&self, id: &NodeId, new_raw: &str) -> Result<NodeContent>;
+    fn load_node(&self, id: &NodeId) -> Result<NodeContent>;
+    fn create_node(&self, relative_path: &str, title: &str, initial_body: &str) -> Result<NodeContent>;
+    fn save_node(&self, id: &NodeId, new_raw: &str) -> Result<NodeContent>;
     fn rename_node(&self, id: &NodeId, new_rel_path: &str) -> Result<NodeMeta>;
     fn delete_node(&self, id: &NodeId) -> Result<()>;
 }
