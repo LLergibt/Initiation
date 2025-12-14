@@ -1,7 +1,7 @@
 <script lang="ts">
     import "./styles.scss";
     import Icons from "$lib/utils/icons";
-    import { PaneGroup, Pane, PaneResizer, type PaneAPI } from "paneforge";
+    import { Pane, type PaneAPI } from "paneforge";
     import { sidebarStore, handleResize, preventGrow } from "./sidebarStore";
     let { containerWidth } = $props();
 
