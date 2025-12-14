@@ -1,18 +1,22 @@
 <script lang="ts">
     import "./styles.scss";
     import Icons from "$lib/utils/icons";
-    import { PaneGroup, Pane, PaneResizer } from "paneforge";
+    import { PaneGroup, Pane, PaneResizer, type PaneAPI } from "paneforge";
+    import { sidebarStore, handleResize, preventGrow } from "./sidebarStore";
     let { containerWidth } = $props();
 
-    let isHidden = $state(false);
     // svelte-ignore non_reactive_update
-    let paneOne: ReturnType<typeof Pane>;
-    let sidebarWidthPx = 224;
+    let paneOne: PaneAPI;
+    let isHidden = $state(false);
+    $effect(() => {
+        sidebarStore.set(paneOne);
+        // preventGrow is preventing sidebar to adapt when resizing window
+        // its probably not a best way to do that cause its overwrite default behavior of library and
+        // causes some visual bugs  when resizing but it works
+        preventGrow(containerWidth);
+    });
 
-    const hideSidebar = () => {
-        isHidden = !isHidden;
-    };
-    // Заглушки пока Vladimir GURSKY не сделал апи с файловой системой
+    // Some example of data
     const sidebarItems = [
         {
             name: "Заметки о персонажах",
@@ -22,27 +26,22 @@
         },
         { name: "Initiation Script", type: "file", active: true },
     ];
-    const handleResize = async (sizeInPercent: number) => {
-        if (containerWidth) {
-            sidebarWidthPx = (sizeInPercent / 100) * containerWidth;
-        }
-    };
-    $effect(() => {
-        if (paneOne && containerWidth && sidebarWidthPx) {
-            const newPercent = (sidebarWidthPx / containerWidth) * 100;
-            paneOne.resize(newPercent);
-        }
-    });
 </script>
 
 <Pane
-    onResize={handleResize}
+    onResize={(sizeInPercent) => {
+        handleResize(sizeInPercent, containerWidth);
+    }}
     collapsible={true}
     collapsedSize={0}
+    minSize={20}
     bind:this={paneOne}
-    onCollapse={() => (isHidden = true)}
-    onExpand={() => (isHidden = false)}
-    defaultSize={14}
+    onCollapse={() => {
+        isHidden = true;
+    }}
+    onExpand={() => {
+        isHidden = false;
+    }}
     style={isHidden
         ? `width: 3rem !important; flex: none !important;`
         : `min-width: 14rem;`}
@@ -55,8 +54,6 @@
                 <button class="icon-btn last-elem" onclick={paneOne.collapse}>
                     {@html Icons.sidebar}
                 </button>
-                <!-- <button onclick={hideSidebar} class="icon-btn last-elem">
-                </button> -->
             </div>
 
             <div class="file-tree">
