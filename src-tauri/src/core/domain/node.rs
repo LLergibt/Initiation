@@ -1,22 +1,20 @@
 use std::path::PathBuf;
 use chrono::{DateTime, Utc};
+use serde::{Serialize, Deserialize};
 
-// use super::vault::VaultId;
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct NodeId(pub String);
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum NodeKind {
     Note,
     Asset,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct NodeMeta {
-    // pub vault_id: VaultId,
+    pub id: NodeId,
     pub kind: NodeKind,
-
     pub path: PathBuf,  // relative path inside the vault
     pub title: String,
     pub tags: Vec<String>,
@@ -26,11 +24,12 @@ pub struct NodeMeta {
 
     pub color: Option<String>,
 
+    pub size_bytes: Option<u64>, 
     pub content_hash: Option<String>, // maybe version?
 }
 
-#[derive(Debug, Clone)]
-pub struct NoteContent {
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct NodeContent {
     pub meta: NodeMeta,
     pub raw: String,
 }
