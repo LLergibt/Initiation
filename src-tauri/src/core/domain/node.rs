@@ -24,8 +24,6 @@ pub struct NodeMeta {
 
     pub color: Option<String>,
 
-    pub size_bytes: Option<u64>, 
-    pub content_hash: Option<String>, // maybe version?
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
