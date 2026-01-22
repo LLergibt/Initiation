@@ -1,5 +1,5 @@
 mod domain;
-mod infrastructure;
+mod ports;
 mod workspace;
 mod services;
 

@@ -1,29 +1,7 @@
-use std::{os::raw, path::{Path, PathBuf}};
+use std::path::Path;
 
 use anyhow::Result;
-use crate::core::{WorkspaceInfo, NodeId, NodeMeta, NodeContent};
-
-// Content control layer - works only with content, no meta, RW operation for files
-pub trait ContentSource {
-    fn read(&self, key: &Path) -> Result<Vec<u8>>;
-    fn write(&self, key: &Path, data: &[u8]) -> Result<()>;
-    fn delete(&self, key: &Path) -> Result<()>;
-    fn list(&self, prefix: &Path) -> Result<Vec<PathBuf>>;
-}
-
-// Meta control layer - everything we know about nodes and their meta
-pub trait MetaStore {
-    fn upsert_nodes(&self, nodes: &[NodeMeta]) -> Result<()>;
-    fn get_node(&self, id: &NodeId) -> Result<Option<NodeMeta>>;
-    fn list_nodes(&self) -> Result<Vec<NodeMeta>>;
-    fn update_node(&self, node: &NodeMeta) -> Result<()>;
-    fn delete_node(&self, id: &NodeId) -> Result<()>;
-}
-
-pub trait IndexPort {
-    fn update_node(&self, id: &NodeId, raw: &str) -> Result<()>;
-    fn backlinks(&self, id: &NodeId) -> Result<Vec<NodeId>>;
-}
+use crate::core::{NodeId, NodeMeta};
 
 #[derive(Debug, Clone)]
 pub struct ResyncReport {
