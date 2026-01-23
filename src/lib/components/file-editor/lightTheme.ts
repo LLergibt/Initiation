@@ -3,7 +3,8 @@ import { EditorView } from "@codemirror/view";
 const lightTheme = EditorView.theme(
   {
     ".cm-content": {
-      fontFamily: "Inter, sans-serif",
+      fontFamily:
+        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
       fontSize: "1rem",
       lineHeight: "1.6",
       color: "#222",
@@ -12,6 +13,10 @@ const lightTheme = EditorView.theme(
     ".cm-line": {
       padding: "2px 4px",
     },
+    ".ͼ5": {
+      color: "#B3B3B3",
+    },
+
     ".cm-activeLine": {
       background: "transparent !important",
     },

@@ -1,6 +1,9 @@
 <script lang="ts">
     import CodeMirror from "svelte-codemirror-editor";
     import { EditorView } from "@codemirror/view";
+    import { currentFile } from "$lib/stores/file.store";
+    // import { currentFile } from "$lib/stores";
+
     import { markdown } from "@codemirror/lang-markdown";
     import {
         defaultHighlightStyle,
@@ -28,13 +31,6 @@
     };
 
     let isEdit = $state(false);
-    let value = $state(`# Initiation Script
-it's not a lake it's an **ocean**.
-## Saga
-**Saga** was back at Cauldron Lake. He was there too. Nightingale. Was, but wasn't. A Taken. A creature of darkness. He was beyond her reach. Where some other strange reality, the Dark Place, merged with ours. This place and the Dark Place. A tarp thrown over top. Drowning everything beneath it. A flood of darkness. Soaking into everything. Spoiling it. Rotting it. The page called this area an Overlap. Saga had to purse
-Nightingale into the Overlap. Finding a way in would be difficult. Required precise steps. A ritual. Saga would
-learn how. Stop the monster. Her job. Before he killed again. He'd be inside. Waiting for her.
-`);
     const onChangeMode = () => {
         isEdit = !isEdit;
     };
@@ -63,10 +59,16 @@ learn how. Stop the monster. Her job. Before he killed again. He'd be inside. Wa
     </div>
     <div class="editor-area">
         <div class="editor-width-limiter">
+            <div>
+                <input
+                    class="page-title editable"
+                    bind:value={$currentFile.name}
+                />
+            </div>
             <div class="page-content">
                 {#if isEdit}
                     <CodeMirror
-                        bind:value
+                        bind:value={$currentFile.data}
                         lang={markdown()}
                         extensions={[
                             defaultHighlight,
@@ -79,7 +81,7 @@ learn how. Stop the monster. Her job. Before he killed again. He'd be inside. Wa
                     >
                 {:else}
                     <div class="markdown wrap">
-                        {@html marked.parse(value)}
+                        {@html marked.parse($currentFile.data)}
                     </div>
                 {/if}
             </div>
