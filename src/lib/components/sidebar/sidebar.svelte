@@ -3,6 +3,7 @@
     import Icons from "$lib/utils/icons";
     import { Pane, type PaneAPI } from "paneforge";
     import { sidebarStore, handleResize, preventGrow } from "./sidebarStore";
+    import { currentDirectory } from "$lib/stores/file.store";
     let { containerWidth } = $props();
 
     // svelte-ignore non_reactive_update
@@ -57,7 +58,7 @@
             </div>
 
             <div class="file-tree">
-                {#each sidebarItems as item}
+                {#each $currentDirectory.files as item}
                     <div class="tree-item {item.active ? 'active' : ''}">
                         {#if item.type === "folder"}
                             <span class="arrow">
@@ -75,8 +76,10 @@
 
             <div class="sidebar-footer">
                 <div class="user-profile">
-                    <div class="avatar">A</div>
-                    <span>Alan Wake 3</span>
+                    {@html Icons.select}
+                    <span>
+                        {$currentDirectory.name}
+                    </span>
                 </div>
             </div>
         </aside>
