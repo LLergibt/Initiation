@@ -125,8 +125,8 @@ mod tests {
 
         let _ms = FsMetaStoreJson::open(root).unwrap();
 
-        assert!(root.join("meta").exists());
-        assert!(root.join("meta").join("nodes.json").exists());
+        assert!(root.join(".initiation/meta").exists());
+        assert!(root.join(".initiation/meta").join("nodes.json").exists());
     }
 
     #[test]
@@ -151,7 +151,7 @@ mod tests {
     }
 
     #[test]
-    fn find_by_path_works() {
+    fn find_by_path_returns_node_or_none() {
         let dir = tempdir().unwrap();
         let ms = FsMetaStoreJson::open(dir.path()).unwrap();
 

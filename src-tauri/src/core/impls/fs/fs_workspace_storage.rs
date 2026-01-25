@@ -256,8 +256,8 @@ mod tests {
 
         let _st = FsWorkspaceStorage::open(root).unwrap();
 
-        assert!(root.join("meta").exists());
-        assert!(root.join("meta").join("nodes.json").exists());
+        assert!(root.join(".initiation/meta").exists());
+        assert!(root.join(".initiation/meta").join("nodes.json").exists());
     }
 
     #[test]
