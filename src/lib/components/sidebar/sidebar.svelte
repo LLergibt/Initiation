@@ -4,7 +4,17 @@
     import { Pane, type PaneAPI } from "paneforge";
     import { sidebarStore, handleResize, preventGrow } from "./sidebarStore";
     import { currentDirectory } from "$lib/stores/file.store";
+    import Modal from "./modal.svelte";
     let { containerWidth } = $props();
+    let show = $state(false);
+    let container: HTMLDivElement | null = $state(null);
+    const clickHandler = (event: any) => {
+        event.preventDefault();
+
+        if (container?.contains(event.target) == false) {
+            show = false;
+        }
+    };
 
     // svelte-ignore non_reactive_update
     let paneOne: PaneAPI;
@@ -29,6 +39,7 @@
     ];
 </script>
 
+<svelte:window on:click={clickHandler} />
 <Pane
     onResize={(sizeInPercent) => {
         handleResize(sizeInPercent, containerWidth);
@@ -74,13 +85,21 @@
                 {/each}
             </div>
 
-            <div class="sidebar-footer">
-                <div class="user-profile">
-                    {@html Icons.select}
+            <div bind:this={container} class="dropdown-container">
+                {#if show}
+                    <Modal />
+                {/if}
+                <button
+                    class="dropdown-toggle"
+                    onclick={() => {
+                        show = !show;
+                    }}
+                >
                     <span>
                         {$currentDirectory.name}
                     </span>
-                </div>
+                    {@html Icons.select}
+                </button>
             </div>
         </aside>
     {:else}
