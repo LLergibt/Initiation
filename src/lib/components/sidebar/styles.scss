@@ -11,6 +11,7 @@ $radius: 8px;
     background-color: #3182ce;
     color: #fff;
 }
+
 .hide-sidebar {
     width: 3rem;
     display: flex;
@@ -106,10 +107,11 @@ $radius: 8px;
         padding: 8px 0;
         left: 5%;
         margin: 0;
-        z-index: 10;
+        z-index: 1;
         border: 1px solid rgba(0, 0, 0, 0.05);
 
         .menu-item {
+            all: unset;
             display: block;
             padding: 10px 15px;
             color: $text-main;
@@ -119,6 +121,11 @@ $radius: 8px;
 
             &:hover {
                 background-color: $hover-bg;
+            }
+            .menu-btn {
+                all: unset;
+                display: block;
+                width: 100%;
             }
         }
     }

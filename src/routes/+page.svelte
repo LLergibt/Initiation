@@ -16,7 +16,6 @@
 </div>
 
 <style>
-    /* Styling the resizer handle */
     :global(.resizer) {
         width: 1.1px;
         background-color: #e4e4e7;
@@ -26,6 +25,6 @@
 
     :global(.resizer:hover),
     :global(.resizer[data-active]) {
-        background-color: #3b82f6; /* Blue highlight on hover/active */
+        background-color: #3b82f6;
     }
 </style>
