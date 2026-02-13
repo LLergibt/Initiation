@@ -6,6 +6,7 @@ use crate::core::errors::storage_error::{Result, StorageError};
 
 use crate::core::impls::fs::fs_workspace_storage::{self, FsWorkspaceStorage};
 use crate::core::{Workspace, WorkspaceInfo, ports::workspace_storage::WorkspaceStorage};
+use crate::core::validation::{validate_rel_path};
 
 pub struct WorkspaceService {
     workspace: RwLock<Option<Workspace>>,
@@ -70,14 +71,8 @@ impl WorkspaceService {
         self.storage()?.load_note_text(id)
     }
 
-    pub fn create_note(&self, rel_path: &Path, title: &str, text: &str) -> Result<NodeMeta> {
-        // Check path (path not exists)
-
-        if self.storage()?.workspace_info()?.root_path.join(rel_path).exists() {
-            return Err(StorageError::AlreadyExists { 
-                what: "node", 
-            })
-        }
+    pub fn create_note(&self, rel_path: &Path, title: &str, text: &str) -> Result<NodeMeta> {        
+        validate_rel_path(rel_path)?;
 
         self.storage()?.create_note(rel_path, title, text)
     }
@@ -87,3 +82,4 @@ impl WorkspaceService {
     }
 
 }
+
