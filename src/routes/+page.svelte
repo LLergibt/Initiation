@@ -18,7 +18,7 @@
 <style>
     /* Styling the resizer handle */
     :global(.resizer) {
-        width: 1px;
+        width: 1.1px;
         background-color: #e4e4e7;
         cursor: col-resize;
         transition: background-color 0.2s;
