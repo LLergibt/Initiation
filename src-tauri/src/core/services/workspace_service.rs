@@ -1,11 +1,10 @@
 use std::{path::Path, sync::Arc, sync::RwLock};
 
 use crate::core::{NodeId, NodeMeta};
-use crate::core::domain::workspace;
 use crate::core::errors::storage_error::{Result, StorageError};
 
-use crate::core::impls::fs::fs_workspace_storage::{self, FsWorkspaceStorage};
-use crate::core::{Workspace, WorkspaceInfo, ports::workspace_storage::WorkspaceStorage};
+use crate::core::impls::fs::fs_workspace_storage::FsWorkspaceStorage;
+use crate::core::{Workspace, WorkspaceInfo, ports::workspace_storage::{ResyncReport, WorkspaceStorage}};
 use crate::core::validation::{validate_rel_path};
 
 pub struct WorkspaceService {
@@ -65,10 +64,23 @@ impl WorkspaceService {
         self.storage()?.list_nodes()
     }
 
+    pub fn get_node_meta(&self, id: &NodeId) -> Result<Option<NodeMeta>> {
+        self.storage()?.get_node_meta(id)
+    }
+
+    pub fn find_node_by_path(&self, rel_path: &Path) -> Result<Option<NodeMeta>> {
+        validate_rel_path(rel_path)?;
+        self.storage()?.find_node_by_path(rel_path)
+    }
+
     pub fn load_note_text(&self, id: &NodeId) -> Result<String> {
         // Maybe needed some checks?
         
         self.storage()?.load_note_text(id)
+    }
+
+    pub fn load_asset_bytes(&self, id: &NodeId) -> Result<Vec<u8>> {
+        self.storage()?.load_asset_bytes(id)
     }
 
     pub fn create_note(&self, rel_path: &Path, title: &str, text: &str) -> Result<NodeMeta> {        
@@ -77,9 +89,34 @@ impl WorkspaceService {
         self.storage()?.create_note(rel_path, title, text)
     }
 
+    pub fn create_asset(&self, rel_path: &Path, display_name: &str, bytes: &[u8]) -> Result<NodeMeta> {
+        validate_rel_path(rel_path)?;
+        self.storage()?.create_asset(rel_path, display_name, bytes)
+    }
+
     pub fn save_note_text(&self, id: &NodeId, text: &str) -> Result<NodeMeta> {     // Return NodeMeta?
         self.storage()?.save_note_text(id, text)
     }
 
-}
+    pub fn save_asset_bytes(&self, id: &NodeId, bytes: &[u8]) -> Result<NodeMeta> {
+        self.storage()?.save_asset_bytes(id, bytes)
+    }
 
+    pub fn update_meta(&self, meta: &NodeMeta) -> Result<NodeMeta> {
+        self.storage()?.update_meta(meta)
+    }
+
+    pub fn rename_node(&self, id: &NodeId, new_rel_path: &Path) -> Result<NodeMeta> {
+        validate_rel_path(new_rel_path)?;
+        self.storage()?.rename_node(id, new_rel_path)
+    }
+
+    pub fn delete_node(&self, id: &NodeId) -> Result<()> {
+        self.storage()?.delete_node(id)
+    }
+
+    pub fn resync(&self) -> Result<ResyncReport> {
+        self.storage()?.resync()
+    }
+
+}
