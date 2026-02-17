@@ -8,4 +8,4 @@ mod validation;
 
 pub use domain::{WorkspaceInfo, NodeId, NodeKind, NodeMeta, NodeContent};
 pub use workspace::Workspace;
-// pub use services::WorkspaceService;
+pub use services::WorkspaceService;
