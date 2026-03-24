@@ -15,9 +15,9 @@ pub fn list_nodes(state: State<WorkspaceService>) -> Result<Vec<NodeMeta>, Strin
 }
 
 #[tauri::command]
-pub fn load_note_text(state: State<WorkspaceService>, id: u128) -> Result<String, String> {
+pub fn load_note_text(state: State<WorkspaceService>, id: NodeId) -> Result<String, String> {
     state
-        .load_note_text(&NodeId(id))
+        .load_note_text(&id)
         .map_err(|e| e.to_string())
 }
 

@@ -1,9 +1,12 @@
 use std::path::Path;
+use serde::{Serialize, Deserialize};
 
 use crate::core::errors::storage_error::Result;
 use crate::core::{NodeId, NodeMeta, WorkspaceInfo};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(ts_rs::TS)]
+#[ts(export, export_to = "../../bindings/")]
 pub struct ResyncReport {
     pub scanned_files: u64,
     pub created_meta: u64,

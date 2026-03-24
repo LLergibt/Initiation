@@ -4,60 +4,65 @@ use crate::core::{NodeId, NodeMeta};
 use crate::core::errors::storage_error::{Result, StorageError};
 
 use crate::core::impls::fs::fs_workspace_storage::FsWorkspaceStorage;
-use crate::core::{Workspace, WorkspaceInfo, ports::workspace_storage::{ResyncReport, WorkspaceStorage}};
-use crate::core::validation::{validate_rel_path};
+use crate::core::{WorkspaceInfo, ports::workspace_storage::{ResyncReport, WorkspaceStorage}};
+use crate::core::validation::validate_rel_path;
+
+struct WorkspaceState {
+    info: WorkspaceInfo,
+    storage: Arc<dyn WorkspaceStorage>,
+}
 
 pub struct WorkspaceService {
-    workspace: RwLock<Option<Workspace>>,
-    storage: RwLock<Option<Arc<dyn WorkspaceStorage>>>
+    state: RwLock<Option<WorkspaceState>>,
 }
 
 impl WorkspaceService {
     pub fn new() -> Self {
         Self {
-            workspace: RwLock::new(None),
-            storage: RwLock::new(None)
-
+            state: RwLock::new(None),
         }
     }
 
     fn storage(&self) -> Result<Arc<dyn WorkspaceStorage>> {
-        let guard = self.storage.read().map_err(|_| StorageError::Other { 
-            details: "storage locked".to_string(),
+        let state = self.state.read().map_err(|_| StorageError::Other {
+            details: "lock poisoned".to_string(),
         })?;
+        state
+            .as_ref()
+            .map(|s| s.storage.clone())
+            .ok_or(StorageError::Other {
+                details: "workspace is not open".to_string(),
+            })
+    }
 
-        guard.clone().ok_or(StorageError::Other { 
-            details: "workspace is not open".to_string(), 
-        })
+    pub fn open(&self, info: WorkspaceInfo, storage: impl WorkspaceStorage + 'static + Send + Sync) -> Result<WorkspaceInfo> {
+        let mut state = self.state.write().map_err(|_| StorageError::Other {
+            details: "lock poisoned".to_string(),
+        })?;
+        *state = Some(WorkspaceState {
+            info: info.clone(),
+            storage: Arc::new(storage),
+        });
+        Ok(info)
     }
 
     pub fn open_fs(&self, root: impl AsRef<Path>) -> Result<WorkspaceInfo> {
-        let fs_workspace_storage = FsWorkspaceStorage::open(root)?;
-        
-        let ws_info = fs_workspace_storage.workspace_info()?;
-        let mut workspace = self.workspace.write().unwrap();
-        *workspace = Some(Workspace::new(ws_info.clone()));
-
-        let mut storage = self.storage.write().unwrap();
-        *storage = Some(Arc::new(fs_workspace_storage));
-
-
-        Ok(ws_info)
+        let fs_storage = FsWorkspaceStorage::open(root)?;
+        let info = fs_storage.workspace_info()?;
+        self.open(info, fs_storage)
     }
 
-    pub fn is_open(&self) -> Result<bool> {
-        Ok(!self.workspace.read().unwrap().is_none())
+    pub fn is_open(&self) -> bool {
+        self.state
+            .read()
+            .map(|s| s.is_some())
+            .unwrap_or(false)
     }
 
-    pub fn close(&self) -> Result<()> {
-
-        let mut workspace = self.workspace.write().unwrap();
-        *workspace = None;
-
-        let mut storage = self.storage.write().unwrap();
-        *storage = None;
-
-        Ok(())
+    pub fn close(&self) {
+        if let Ok(mut state) = self.state.write() {
+            *state = None;
+        }
     }
 
     pub fn list_nodes(&self) -> Result<Vec<NodeMeta>> {
@@ -74,8 +79,6 @@ impl WorkspaceService {
     }
 
     pub fn load_note_text(&self, id: &NodeId) -> Result<String> {
-        // Maybe needed some checks?
-        
         self.storage()?.load_note_text(id)
     }
 
@@ -83,9 +86,8 @@ impl WorkspaceService {
         self.storage()?.load_asset_bytes(id)
     }
 
-    pub fn create_note(&self, rel_path: &Path, title: &str, text: &str) -> Result<NodeMeta> {        
+    pub fn create_note(&self, rel_path: &Path, title: &str, text: &str) -> Result<NodeMeta> {
         validate_rel_path(rel_path)?;
-
         self.storage()?.create_note(rel_path, title, text)
     }
 
@@ -94,7 +96,7 @@ impl WorkspaceService {
         self.storage()?.create_asset(rel_path, display_name, bytes)
     }
 
-    pub fn save_note_text(&self, id: &NodeId, text: &str) -> Result<NodeMeta> {     // Return NodeMeta?
+    pub fn save_note_text(&self, id: &NodeId, text: &str) -> Result<NodeMeta> {
         self.storage()?.save_note_text(id, text)
     }
 
@@ -118,5 +120,4 @@ impl WorkspaceService {
     pub fn resync(&self) -> Result<ResyncReport> {
         self.storage()?.resync()
     }
-
 }

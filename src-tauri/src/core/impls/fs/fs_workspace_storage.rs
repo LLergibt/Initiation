@@ -42,8 +42,8 @@ impl FsWorkspaceStorage {
     }
 
     fn new_id(&self) -> NodeId {
-        let ts = Utc::now().timestamp_millis() as u128;
-        NodeId(ts)
+        NodeId(uuid::Uuid::new_v4().as_u128())
+
     }
 
     fn ensure_note_kind(meta: &NodeMeta) -> Result<()> {
