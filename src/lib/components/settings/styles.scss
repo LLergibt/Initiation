@@ -149,6 +149,7 @@ $transition-speed: 0.2s;
             width: 11.25rem;
         }
         .content {
+            background: $modal-bg;
             display: flex;
             gap: 1rem;
             flex-direction: column;
