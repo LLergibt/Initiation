@@ -18,7 +18,6 @@
 <style>
     :global(.resizer) {
         width: 1.1px;
-        /*background-color: #e4e4e7;*/
         background-color: #e4e4e7;
         cursor: col-resize;
         transition: background-color 0.2s;
@@ -26,6 +25,6 @@
 
     :global(.resizer:hover),
     :global(.resizer[data-active]) {
-        /*background-color: #e4e4e9;*/
+        background-color: #3b82f6;
     }
 </style>

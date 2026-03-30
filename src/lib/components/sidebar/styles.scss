@@ -15,7 +15,6 @@ $radius: 8px;
 .hide-sidebar {
     width: 3rem;
     display: flex;
-    background-color: $bg-sidebar;
     flex-direction: column;
     /* border-right: 1px solid rgba(0, 0, 0, 0.05); */
     height: 100%;
@@ -76,19 +75,17 @@ $radius: 8px;
     display: inline-block;
     display: flex;
     justify-content: center;
-    height: 2.7rem;
 
     .dropdown-toggle {
-        width: 100%;
+        width: 90%;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin: 0 auto;
-        height: 100%;
+        margin-bottom: 0.5rem;
         padding: 10px 12px;
-        background: $bg-content;
-        border: none;
-        border-top: 1px solid $border-color;
+        background: $bg-white;
+        border: 1px solid $border-color;
+        border-radius: $radius;
         font-size: 16px;
         color: $text-main;
         cursor: pointer;
@@ -103,9 +100,9 @@ $radius: 8px;
         bottom: calc(0% + 3.2rem);
         dipslay: none;
         width: 12rem;
-        background: $bg-content;
-        /* border-radius: $radius;
-        box-shadow: $shadow; */
+        background: $bg-white;
+        border-radius: $radius;
+        box-shadow: $shadow;
         list-style: none;
         padding: 8px 0;
         left: 5%;
@@ -188,6 +185,7 @@ $radius: 8px;
             display: flex;
             align-items: center;
             padding: 4px 8px;
+            border-radius: 4px;
             cursor: pointer;
             margin-bottom: 1px;
             color: #444;
@@ -196,7 +194,7 @@ $radius: 8px;
             }
             &.active {
                 background-color: $item-active;
-                color: #fafafa;
+                color: #000;
                 font-weight: 500;
             }
 

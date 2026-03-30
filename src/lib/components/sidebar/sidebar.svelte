@@ -61,8 +61,8 @@
     {#if !isHidden}
         <aside class="sidebar">
             <div class="sidebar-header">
-                <!-- <div class="icon-btn">{@html Icons.folder}</div>
-                <div class="icon-btn">{@html Icons.search}</div> -->
+                <div class="icon-btn">{@html Icons.folder}</div>
+                <div class="icon-btn">{@html Icons.search}</div>
                 <button class="icon-btn last-elem" onclick={paneOne.collapse}>
                     {@html Icons.sidebar}
                 </button>
