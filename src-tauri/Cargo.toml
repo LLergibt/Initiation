@@ -28,6 +28,7 @@ parking_lot = "0.12.5"
 walkdir = "2"
 uuid = "1.22.0"
 ts-rs = { version = "12", features = ["chrono-impl"] }
+tauri-plugin-dialog = "2.6.0"
 [dev-dependencies]
 tempfile = "3"
 [profile.dev]
