@@ -14,8 +14,9 @@
     "windows": [
       {
         "title": "initiation",
-        "width": 800,
-        "height": 600
+        "width": 932,
+        "height": 685,
+        "resizable": false
       }
     ],
     "security": {
