@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { setCurrentDirectory } from "$lib/stores/file.store";
     import switchWindow from "$lib/utils/windows";
     import { invoke } from "@tauri-apps/api/core";
     import { open } from "@tauri-apps/plugin-dialog";

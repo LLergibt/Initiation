@@ -2,19 +2,6 @@
     import Sidebar from "$lib/components/sidebar/sidebar.svelte";
     import { PaneGroup, Pane, PaneResizer } from "paneforge";
     import FileEditor from "$lib/components/file-editor/FileEditor.svelte";
-    import { invoke } from "@tauri-apps/api/core";
-    const getNodes = async () => {
-        // let j = await invoke("create_note", {
-        //     relPath: "initiation/",
-        //     title: "initiation",
-        //     text: "all work and no play makes jack a dull boy",
-        // });
-
-        // console.log(j);
-        let g = await invoke("list_nodes");
-        console.log(g);
-    };
-    getNodes();
 
     let containerWidth = $state();
 </script>

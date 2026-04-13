@@ -1,13 +1,27 @@
 <script lang="ts">
     import "./styles.scss";
     import Icons from "$lib/utils/icons";
+    import TreeCom from "$lib/components/tree/TreeCom.svelte";
+    import { invoke } from "@tauri-apps/api/core";
     import { Pane, type PaneAPI } from "paneforge";
     import { sidebarStore, handleResize, preventGrow } from "./sidebarStore";
-    import { currentDirectory } from "$lib/stores/file.store";
+    import { createNote, currentDirectory } from "$lib/stores/file.store";
     import Modal from "./modal.svelte";
+    import type { FileItem } from "../tree/fileTree";
+    import { onMount } from "svelte";
+
     let { containerWidth } = $props();
     let show = $state(false);
     let container: HTMLDivElement | null = $state(null);
+
+    let files = $state<FileItem[]>();
+    const getNodes = async () => {
+        files = await invoke("list_nodes");
+    };
+    onMount(() => {
+        getNodes();
+    });
+
     const clickHandler = (event: any) => {
         event.preventDefault();
 
@@ -22,7 +36,7 @@
     $effect(() => {
         sidebarStore.set(paneOne);
         // preventGrow is preventing sidebar to adapt when resizing window
-        // its probably not a best way to do that cause its overwrite default behavior of library and
+        // its probably not a best way to do that cause its basically an overwrite of default behavior of library and it
         // causes some visual bugs  when resizing but it works
         preventGrow(containerWidth);
     });
@@ -37,6 +51,11 @@
         },
         { name: "Initiation Script", type: "file", active: true },
     ];
+    const onCreateNote = async (relPath: string) => {
+        const file = await createNote(relPath);
+        console.log(file);
+        files?.push(file);
+    };
 </script>
 
 <svelte:window on:click={clickHandler} />
@@ -61,28 +80,21 @@
     {#if !isHidden}
         <aside class="sidebar">
             <div class="sidebar-header">
-                <!-- <div class="icon-btn">{@html Icons.folder}</div>
-                <div class="icon-btn">{@html Icons.search}</div> -->
+                <button
+                    class="icon-btn"
+                    onclick={() => {
+                        onCreateNote("untit");
+                    }}
+                >
+                    {@html Icons.note}
+                </button>
                 <button class="icon-btn last-elem" onclick={paneOne.collapse}>
                     {@html Icons.sidebar}
                 </button>
             </div>
 
             <div class="file-tree">
-                {#each $currentDirectory.files as item}
-                    <div class="tree-item {item.active ? 'active' : ''}">
-                        {#if item.type === "folder"}
-                            <span class="arrow">
-                                {@html item.collapsed
-                                    ? Icons.arrowRight
-                                    : Icons.arrowDown}
-                            </span>
-                        {:else}
-                            <span class="spacer"></span>
-                        {/if}
-                        <span class="item-name">{item.name}</span>
-                    </div>
-                {/each}
+                <TreeCom {files} />
             </div>
 
             <div bind:this={container} class="dropdown-container">
