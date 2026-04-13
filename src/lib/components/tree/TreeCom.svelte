@@ -43,7 +43,20 @@
         <span class="indent"></span>
 
         {#if item.isDir}
-            <span class="chevron" class:open={item.isOpen}>›</span>
+            <span class="chevron" class:open={item.isOpen}>
+                <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <polyline points="9 18 15 12 9 6" />
+                </svg>
+            </span>
         {/if}
         <span class="name">{item.file?.title ?? item.name}</span>
     </button>
@@ -51,11 +64,14 @@
 
 <style>
     .chevron {
-        display: inline-block;
-        width: 12px;
-        font-size: 12px;
+        /*display: inline-block;*/
+        display: inline-flex;
+        width: 13px;
+        justify-content: center;
+        align-items: center;
         transition: transform 0.15s;
         transform: rotate(0deg);
+        transform-origin: center center;
     }
     .chevron.open {
         transform: rotate(90deg);
