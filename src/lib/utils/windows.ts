@@ -7,7 +7,6 @@ async function switchWindow() {
     title: "initiation",
     fullscreen: true,
   });
-  console.log("all work and no play makes jack a dull boy");
 
   newWindow.once("tauri://created", async () => {
     console.log("here we are");
